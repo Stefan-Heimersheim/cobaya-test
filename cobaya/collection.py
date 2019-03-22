@@ -229,6 +229,9 @@ class Collection(object):
         names = list(self.sampled_params)
         # No logging of warnings temporarily, so getdist won't complain unnecessarily
         logging.disable(logging.WARNING)
+        print('DEBUG:',self.data[:self.n()][names].values[first:last])
+        print('DEBUG:',self.data[:self.n()][_weight].values[first:last])
+        print('DEBUG:',self.data[:self.n()][_minuslogpost].values[first:last])
         mcsamples = MCSamples(
             samples=self.data[:self.n()][names].values[first:last],
             weights=self.data[:self.n()][_weight].values[first:last],
