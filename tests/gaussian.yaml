@@ -1,0 +1,45 @@
+likelihood:
+  external: import_module('gaussian_like').loglike
+
+params:
+  a:
+    prior:
+      min: -5
+      max:  5
+    ref: 0
+    proposal: 0.1
+  b:
+    prior:
+      min: -5
+      max:  5
+    ref: 0
+    proposal: 0.1
+  c:
+    prior:
+      min: -5
+      max:  5
+    ref: 0
+    proposal: 0.1
+  d:
+    prior:
+      min: -5
+      max:  5
+    ref: 0
+    proposal: 0.1
+  e:
+    prior:
+      min: -5
+      max:  5
+    ref: 0
+    proposal: 0.1
+
+sampler:
+  mcmc:
+    burn_in: 0
+    blocking:
+      - [20, [a]]
+      - [1, [b,c]]
+      - [2, [d,e]]
+    oversample: True
+
+output: chains/gaussian

@@ -49,6 +49,11 @@ sampler:
     drag: False
     # Min and max number of times the fast block is iterated
     drag_limits : [1, 10]
+    # Manual blocking
+    # ----------------
+    blocking:
+    #  - [speed_1, [params_1]]
+    #  - etc.
     # Callback function
     # -----------------
     callback_function:

@@ -95,17 +95,24 @@ class mcmc(Sampler):
         if self.oversample and self.drag:
             self.log.error("Choose either oversampling or dragging, not both.")
             raise HandledException
+        if self.blocking:
+            try:
+                speeds, blocks = zip(*list(self.blocking))
+            except:
+                raise HandledException(
+                    "Blocking not understood. "
+                    "Specify an ordered mapping of '(TUPLE of params): speed'")
+        else:
+            speeds, blocks = self.model.likelihood._speeds_of_params(
+                int_speeds=self.oversample or self.drag, fast_slow=self.drag)
         if self.oversample:
-            factors, blocks = self.model.likelihood._speeds_of_params(int_speeds=True)
-            self.oversampling_factors = factors
+            self.oversampling_factors = speeds
             self.log.info("Oversampling with factors:\n" + "\n".join([
                 "   %d : %r" % (f, b) for f, b in zip(self.oversampling_factors, blocks)]))
             self.i_last_slow_block = None
             # No way right now to separate slow and fast
             slow_params = list(self.model.parameterization.sampled_params())
         elif self.drag:
-            speeds, blocks = self.model.likelihood._speeds_of_params(
-                fast_slow=True, int_speeds=True)
             # For now, no blocking inside either fast or slow: just 2 blocks
             self.i_last_slow_block = 0
             if np.all(speeds == speeds[0]):
@@ -146,7 +153,6 @@ class mcmc(Sampler):
                                            [blocks[0], fast_params])]))
             self.get_new_sample = self.get_new_sample_dragging
         else:
-            _, blocks = self.model.likelihood._speeds_of_params()
             self.oversampling_factors = [1 for b in blocks]
             slow_params = list(self.model.parameterization.sampled_params())
             self.n_slow = len(slow_params)
