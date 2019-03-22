@@ -203,7 +203,9 @@ Likelihood ``lik_a`` is assumed to be as slow as the theory code.
 Manual specification of speed-blocking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*Automatic* speed-blocking take advantage of difference in speeds per likelihood or theory. If the parameters of your likelihood or theory have some internal speed hierarchy that you would like to utilize, you can specify a fine-grained list of parameter blocks and their speeds under the ``mcmc`` option ``blocking``. E.g. if a likelihood depends of parameters ``a``, ``b`` and ``c`` and the cost of varying ``a`` is twice as big as the other two, your ``mcmc`` block should look like
+*Automatic* speed-blocking takes advantage of differences in speed *per likelihood* (or theory). If the parameters of your likelihood or theory have some internal speed hierarchy that you would like to utilize (e.g. if your likelihood internally caches the result of a computation depending only on a subset of the likelihood parameters), you can specify a fine-grained list of parameter blocks and their speeds under the ``mcmc`` option ``blocking``.
+
+E.g. if a likelihood depends of parameters ``a``, ``b`` and ``c`` and the cost of varying ``a`` is twice as big as the other two, your ``mcmc`` block should look like
 
 .. code-block:: yaml
 
@@ -215,8 +217,13 @@ Manual specification of speed-blocking
      # or `drag: True`, if 2-blocks only, fastest first
      # other options...
 
-Notice that if ``blocking`` is specified, it must contain **all** the sampled parameters.
+.. note::
 
+   If ``blocking`` is specified, it must contain **all** the sampled parameters.
+
+.. note::
+
+   If automatic learning of the proposal covariance is enabled, after some checkpoint the proposed steps will mix parameters from different blocks, but *always towards faster ones*. Thus, it is important to specify your blocking in **ascending order of speed**, when not prevented by the architecture of your likelihood (e.g. due to internal caching of intermediate results that require some particular order of parameter variation).
 
 Options and defaults
 --------------------
