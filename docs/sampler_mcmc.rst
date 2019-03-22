@@ -46,7 +46,7 @@ approximate initial covariance matrix).
 .. _mcmc_callback:
 
 Callback functions
-^^^^^^^^^^^^^^^^^^
+------------------
 
 A callback function can be specified through the ``callback_function`` option. It must be a function of a single argument, which at runtime is the current instance of the ``mcmc`` sampler. You can access its attributes and methods inside your function, including the ``collection`` of chain points and the ``model`` (of which ``prior`` and ``likelihood`` are attributes). For example, the following callback function would print the points added to the chain since the last callback:
 
@@ -59,7 +59,7 @@ The callback function is called every ``callback_every`` points have been added 
 
 
 Initial point and covariance of the proposal pdf
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------------
 
 The initial points for the chains are sampled from the *reference* pdf
 (see :doc:`params_prior`). The reference pdf can be a fixed point, and in that case the
@@ -155,7 +155,7 @@ also converge). Often removing the first 30% the entire final chains gives good 
 .. _mcmc_speed_hierarchy:
 
 Taking advantage of a speed hierarchy
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 The proposal pdf is *blocked* by speeds, i.e. it allows for efficient sampling of a
 mixture of *fast* and *slow* parameters, such that we can avoid recomputing the slowest
@@ -199,6 +199,22 @@ For example:
 
 Here, evaluating the theory code is the slowest step, while the ``lik_b`` is faster.
 Likelihood ``lik_a`` is assumed to be as slow as the theory code.
+
+Manual specification of speed-blocking
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Automatic* speed-blocking take advantage of difference in speeds per likelihood or theory. If the parameters of your likelihood or theory have some internal speed hierarchy that you would like to utilize, you can specify a fine-grained list of parameter blocks and their speeds under the ``mcmc`` option ``blocking``. E.g. if a likelihood depends of parameters ``a``, ``b`` and ``c`` and the cost of varying ``a`` is twice as big as the other two, your ``mcmc`` block should look like
+
+.. code-block:: yaml
+
+   mcmc:
+     blocking:
+       - [1, [a]]
+       - [2, [b,c]]
+     oversampling: True  # if desired
+     # other options...
+
+Notice that if ``blocking`` is specified, it must contain **all** the sampled parameters.
 
 
 Options and defaults
