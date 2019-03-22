@@ -212,6 +212,7 @@ Manual specification of speed-blocking
        - [1, [a]]
        - [2, [b,c]]
      oversampling: True  # if desired
+     # or `drag: True`, if 2-blocks only, fastest first
      # other options...
 
 Notice that if ``blocking`` is specified, it must contain **all** the sampled parameters.
