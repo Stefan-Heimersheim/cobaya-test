@@ -20,18 +20,12 @@ from time import time, sleep
 import numpy as np
 from itertools import chain, permutations
 import six
-
-if six.PY3:
-    from math import gcd
-else:
-    from fractions import gcd
-
 from copy import deepcopy
 
 # Local
 from cobaya.conventions import _external, _theory, _params, _overhead_per_param
 from cobaya.conventions import _timing, _p_renames, _chi2, _separator
-from cobaya.tools import get_class, get_external_function, getargspec
+from cobaya.tools import get_class, get_external_function, getargspec, relative_to_int
 from cobaya.log import HandledException
 
 # Logger
@@ -454,12 +448,7 @@ class LikelihoodCollection(object):
         costs_per_param_per_block[:-1] -= costs_per_param_per_block[1:]
         params_speeds = 1 / costs_per_param_per_block
         if int_speeds:
-            # Oversampling precision: smallest difference in oversampling to be ignored.
-            speed_precision = 1 / 10
-            speeds = np.array(np.round(np.array(
-                params_speeds) / min(params_speeds) / speed_precision), dtype=int)
-            params_speeds = np.array(
-                speeds / np.ufunc.reduce(np.frompyfunc(gcd, 2, 1), speeds), dtype=int)
+            params_speeds = relative_to_int(params_speeds)
         log.debug("Optimal ordering of parameter blocks: %r with speeds %r",
                   blocks, params_speeds)
         # Fast-slow separation: chooses separation that maximizes log-difference in speed
