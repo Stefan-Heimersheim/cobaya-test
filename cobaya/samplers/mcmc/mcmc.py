@@ -97,8 +97,6 @@ class mcmc(Sampler):
             self.log.error("Choose either oversampling or dragging, not both.")
             raise HandledException
         if self.blocking:
-            if self.drag:
-                raise HandledException("Manual blocking not yet compatible with dragging.")
             try:
                 speeds, blocks = zip(*list(self.blocking))
                 speeds = np.array(speeds)
