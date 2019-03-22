@@ -33,6 +33,18 @@ import logging
 
 log = logging.getLogger(__name__.split(".")[-1])
 
+# Deepcopy workaround:
+def deepcopyfix(olddict):
+    if not hasattr(olddict, "keys"):
+        return deepcopy(olddict)
+    newdict={}
+    for key in olddict:
+        if(key=='theory' or key=='instance' or key=='external'):
+            newdict[key]=olddict[key]
+        else:
+            #print(key)
+            newdict[key]=deepcopy(olddict[key])
+    return newdict
 
 def get_folder(name, kind, sep=os.sep, absolute="True"):
     """

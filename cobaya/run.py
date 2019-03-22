@@ -25,7 +25,7 @@ from cobaya.log import logger_setup
 from cobaya.yaml import yaml_dump
 from cobaya.input import get_full_info
 from cobaya.mpi import import_MPI, am_single_or_primary_process
-
+from cobaya.tools import deepcopyfix
 
 def run(info):
     assert hasattr(info, "keys"), (
@@ -66,7 +66,7 @@ def run(info):
                      modules=info.get(_path_install)) as sampler:
             sampler.run()
     # For scripted calls
-    return deepcopy(full_info), sampler.products()
+    return deepcopyfix(full_info), sampler.products()
 
 
 # Command-line script

@@ -23,7 +23,7 @@ from cobaya.prior import Prior
 from cobaya.likelihood import LikelihoodCollection as Likelihood
 from cobaya.log import HandledException, logger_setup
 from cobaya.yaml import yaml_dump
-
+from cobaya.tools import deepcopyfix
 # Logger
 import logging
 
@@ -43,7 +43,7 @@ def get_model(info):
     import getdist
     logger_setup(info.pop(_debug, _debug_default), info.pop(_debug_file, None))
     # Create the full input information, including defaults for each module.
-    info = deepcopy(info)
+    info = deepcopyfix(info)
     ignored_info = {}
     for k in list(info):
         if k not in [_params, _likelihood, _prior, _theory, _path_install, _timing]:
@@ -84,10 +84,11 @@ class Model(object):
             raise HandledException
         for like in self._full_info[_likelihood].values():
             like.pop(_params)
+#            like.pop(_params,None)
         for k, v in ((_prior, info_prior), (_theory, info_theory),
                      (_path_install, modules), (_timing, timing)):
             if v not in (None, {}):
-                self._full_info[k] = deepcopy(v)
+                self._full_info[k] = deepcopyfix(v)
         self.parameterization = Parameterization(info_params, allow_renames=allow_renames)
         self.prior = Prior(self.parameterization, info_prior)
         self.likelihood = Likelihood(info_likelihood, self.parameterization, info_theory,

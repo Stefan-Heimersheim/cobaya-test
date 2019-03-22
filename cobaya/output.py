@@ -25,6 +25,7 @@ from cobaya.conventions import _force_reproducible_default, _likelihood, _params
 from cobaya.log import HandledException
 from cobaya.input import is_equal_info
 from cobaya.mpi import am_single_or_primary_process, get_mpi_comm
+from cobaya.tools import deepcopyfix
 
 # Logger
 import logging
@@ -111,7 +112,7 @@ class Output(object):
         If resuming a sample, checks first that old and new infos are consistent.
         """
         # trim known params of each likelihood: for internal use only
-        full_info_trimmed = deepcopy(full_info)
+        full_info_trimmed = deepcopyfix(full_info)
         for lik_info in full_info_trimmed.get(_likelihood, {}).values():
             if hasattr(lik_info, "pop"):
                 lik_info.pop(_params, None)
